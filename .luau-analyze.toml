@@ -1,0 +1,6 @@
+[analyze]
+.definition_files = []
+
+[lint]
+unused_variable = "warn"
+shadowing_upvalue = "warn"

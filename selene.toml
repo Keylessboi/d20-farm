@@ -1,0 +1,7 @@
+[config]
+empty_if = "allow"
+global_usage = "allow"
+if_same_then_else = "allow"
+
+[std]
+Roblox = true

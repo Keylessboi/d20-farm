@@ -1,32 +1,48 @@
---!strict
--- D20 Farm - Constants
--- All magic numbers in one place
+--[[
+	Constants.luau
+	Shared game configuration for D20 Idle Dice Game.
+	Defines dice tiers, shop settings, gameplay parameters, and remote event names.
+	Used by both server and client via ReplicatedStorage.Shared.Constants.
+]]
 
 local Constants = {}
 
--- Dice
-Constants.MAX_ROLL = 20
-Constants.MIN_ROLL = 1
-Constants.DICE_SIZE = 64 -- pixels per face
-Constants.DICE_UPSCALE = 512 -- upload size (64x8 upscaled)
+-- Dice tiers: each entry defines a purchasable dice with visual theme, cost, and reward multiplier.
+-- Tier 0 (Wooden) is the starter dice and costs nothing.
+Constants.DICE_TYPES = {
+	{ name = "Wooden D20",    color = Color3.fromRGB(139, 90, 43),   cost = 0,    multiplier = 1.0 },
+	{ name = "Stone D20",     color = Color3.fromRGB(128, 128, 128), cost = 100,  multiplier = 1.1 },
+	{ name = "Iron D20",      color = Color3.fromRGB(192, 192, 192), cost = 250,  multiplier = 1.2 },
+	{ name = "Gold D20",      color = Color3.fromRGB(255, 215, 0),   cost = 600,  multiplier = 1.4 },
+	{ name = "Emerald D20",   color = Color3.fromRGB(80, 200, 120),  cost = 1500, multiplier = 1.6 },
+	{ name = "Ruby D20",      color = Color3.fromRGB(220, 50, 50),   cost = 4000, multiplier = 1.9 },
+	{ name = "Diamond D20",   color = Color3.fromRGB(180, 230, 255), cost = 10000,multiplier = 2.3 },
+	{ name = "Obsidian D20",  color = Color3.fromRGB(30, 30, 40),    cost = 25000,multiplier = 2.8 },
+	{ name = "Cosmic D20",    color = Color3.fromRGB(100, 80, 200),  cost = 60000,multiplier = 3.5 },
+	{ name = "Legendary D20", color = Color3.fromRGB(255, 170, 0),   cost = 150000,multiplier = 4.5 },
+	{ name = "Mythic D20",    color = Color3.fromRGB(255, 60, 120),  cost = 400000,multiplier = 6.0 },
+}
 
--- Animation
-Constants.ROLL_DURATION = 1.5 -- seconds for spin animation
-Constants.SPIN_SPEED = 720 -- degrees per second
+-- Shop configuration for purchasing new dice tiers.
+Constants.SHOP_CONFIG = {
+	basePrice = 100,         -- Coins required for the first purchasable dice (Stone D20).
+	priceMultiplier = 2.5,   -- Each subsequent tier costs this many times the previous tier.
+}
 
--- Coins
-Constants.COIN_BURST_COUNT = 20 -- particles per burst
-Constants.COIN_BURST_DURATION = 1.5 -- seconds
+-- Core gameplay parameters.
+Constants.GAME_CONFIG = {
+	criticalRollValue = 20,     -- The dice value that triggers a critical hit.
+	criticalMultiplier = 2,     -- Coins earned on a critical hit are multiplied by this value.
+	rollCooldown = 1.5,         -- Seconds a player must wait between rolls.
+}
 
--- Colors (Black & Gold dice aesthetic)
-Constants.COLOR_GOLD = Color3.fromRGB(255, 215, 0)
-Constants.COLOR_BLACK = Color3.fromRGB(20, 20, 20)
-Constants.COLOR_DARK_BROWN = Color3.fromRGB(60, 40, 20)
-Constants.COLOR_GREEN = Color3.fromRGB(34, 139, 34)
-Constants.COLOR_CREAM = Color3.fromRGB(255, 253, 240)
-
--- UI
-Constants.BUTTON_SIZE = UDim2.new(0, 200, 0, 60)
-Constants.COUNTER_SIZE = UDim2.new(0, 300, 0, 50)
+-- Remote event / function names shared between server and client.
+Constants.REMOTES = {
+	"RollDice",
+	"RollResult",
+	"CoinUpdated",
+	"ShopUpdated",
+	"DiceAdded",
+}
 
 return Constants

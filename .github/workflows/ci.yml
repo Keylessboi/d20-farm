@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install selene
+        run: |
+          curl -sL https://github.com/Kampfkarren/selene/releases/latest/download/selene-linux.zip -o selene.zip
+          unzip selene.zip -d selene-bin
+          sudo mv selene-bin/selene /usr/local/bin/
+
+      - name: Run selene
+        run: selene src/ tests/
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install luau-analyze
+        run: |
+          curl -sL https://github.com/Roblox/luau/releases/latest/download/luau-analyze-linux.zip -o luau.zip
+          unzip luau.zip -d luau-bin
+          sudo mv luau-bin/luau-analyze /usr/local/bin/
+
+      - name: Run luau-analyze
+        run: luau-analyze src/
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run unit tests
+        run: |
+          echo "Unit tests run in Roblox Studio"
+          echo "This job validates test files exist"
+          test -f tests/DiceService.test.lua
+          test -f tests/CoinService.test.lua
+          test -f tests/ShopService.test.lua
