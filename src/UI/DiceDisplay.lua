@@ -23,7 +23,7 @@ local SCALE_STEP = 0.067 -- per additional die beyond the first
 -- Dice sprite asset ID (replace with uploaded asset ID in production)
 -- The D20.hex sprite is uploaded as an Image asset in Roblox Studio.
 -- For now we use a placeholder decal ID that will be swapped after upload.
-local DICE_SPRITE_ID = "rbxassetid://74581307049133"
+local DICE_SPRITE_ID = "rbxassetid://128788393049713"
 local FRAME_SIZE = 64
 local TOTAL_FRAMES = 10
 local ANIM_DURATION = 0.8
