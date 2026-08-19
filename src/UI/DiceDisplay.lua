@@ -23,7 +23,10 @@ local SCALE_STEP = 0.067 -- per additional die beyond the first
 -- Dice sprite asset ID (replace with uploaded asset ID in production)
 -- The D20.hex sprite is uploaded as an Image asset in Roblox Studio.
 -- For now we use a placeholder decal ID that will be swapped after upload.
-local DICE_SPRITE_ID = "rbxassetid://112604819604412"
+local DICE_SPRITE_ID = "rbxassetid://74581307049133"
+local FRAME_SIZE = 64
+local TOTAL_FRAMES = 10
+local ANIM_DURATION = 0.8
 
 local DiceDisplay = {}
 
@@ -83,7 +86,7 @@ function DiceDisplay.create(parent: Instance): ScreenGui
 	gui.Parent = parent
 
 	-- Show default single D20 on creation
-	DiceDisplay.updateDice({{ color = Color3.fromRGB(139, 90, 43) }}, false)
+	DiceDisplay.updateDice({{ color = Color3.fromRGB(20, 20, 20) }}, false)
 
 	return gui
 end
@@ -120,7 +123,9 @@ function DiceDisplay.updateDice(diceList: { any }, isCritical: boolean?)
 		label.Size = UDim2.new(0, scaledSize, 0, scaledSize)
 		label.BackgroundTransparency = 1
 		label.Image = DICE_SPRITE_ID
-		label.ImageColor3 = dice.color or Color3.fromRGB(255, 255, 255)
+		label.ImageRectSize = Vector2.new(FRAME_SIZE, FRAME_SIZE)
+		label.ImageRectOffset = Vector2.new(0, 0)
+		label.ImageColor3 = dice.color or Color3.fromRGB(20, 20, 20) -- black default
 		label.ScaleType = Enum.ScaleType.Fit
 		label.AnchorPoint = Vector2.new(0.5, 0.5)
 
@@ -142,12 +147,9 @@ function DiceDisplay.updateDice(diceList: { any }, isCritical: boolean?)
 end
 
 --- Play the roll spin animation on all displayed dice.
---- Calls `callback` when the animation completes (after SPIN_DURATION seconds).
+--- Calls `callback` when the animation completes.
 function DiceDisplay.playRollAnimation(callback: (() -> ())?)
-	if isAnimating then
-		return -- prevent overlapping rolls
-	end
-	if #diceLabels == 0 then
+	if isAnimating or #diceLabels == 0 then
 		if callback then
 			callback()
 		end
@@ -155,31 +157,31 @@ function DiceDisplay.playRollAnimation(callback: (() -> ())?)
 	end
 
 	isAnimating = true
-
 	local completedCount = 0
-	local totalCount = #diceLabels
 
 	for _, label in ipairs(diceLabels) do
-		local tween = TweenService:Create(
-			label,
-			TweenInfo.new(
-				SPIN_DURATION,
-				Enum.EasingStyle.Cubic,
-				Enum.EasingDirection.Out,
-				0, -- repeatCount
-				false, -- reverses
-				0 -- delayTime
-			),
-			{ Rotation = 360 }
-		)
+		task.spawn(function()
+			for frame = 0, TOTAL_FRAMES - 1 do
+				label.ImageRectOffset = Vector2.new(0, frame * FRAME_SIZE)
 
-		tween:Play()
+				-- Squash/stretch effect
+				if frame < 3 then
+					label.Size = UDim2.new(0, 64, 0, 64 - frame * 4)
+				elseif frame < 6 then
+					label.Size = UDim2.new(0, 64 + (frame - 3) * 2, 0, 56 + (frame - 3) * 2)
+				else
+					label.Size = UDim2.new(0, 64, 0, 64)
+				end
 
-		tween.Completed:Connect(function()
-			label.Rotation = 0 -- reset to avoid cumulative drift
+				task.wait(ANIM_DURATION / TOTAL_FRAMES)
+			end
+
+			-- Landing frame with highlighted number
+			label.ImageRectOffset = Vector2.new(0, 9 * FRAME_SIZE)
+			label.Size = UDim2.new(0, 64, 0, 64)
+
 			completedCount += 1
-
-			if completedCount >= totalCount then
+			if completedCount >= #diceLabels then
 				isAnimating = false
 				if callback then
 					callback()

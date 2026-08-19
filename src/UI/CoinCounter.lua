@@ -48,7 +48,7 @@ coinIcon.Position = UDim2.new(0, 0, 0.5, -20)
 coinIcon.BackgroundTransparency = 1
 coinIcon.ScaleType = Enum.ScaleType.Fit
 -- Coin.hex is an 8x8 pixel-art grid — placeholder until a Roblox decal is uploaded.
-coinIcon.Image = "rbxassetid://111238667265164"
+coinIcon.Image = "rbxassetid://105709188463991"
 coinIcon.Parent = container
 
 -- ── Coin count text ─────────────────────────────────────────────────────────
@@ -147,14 +147,14 @@ end
 function CoinCounter.showPopup(amount)
 	local popup = Instance.new("TextLabel")
 	popup.Name = "CoinPopup"
-	popup.Size = UDim2.new(0, 120, 0, 30)
-	popup.Position = UDim2.new(0.5, -60, 0.5, 0)
+	popup.Size = UDim2.new(0, 150, 0, 40)
+	popup.Position = UDim2.new(0.5, -75, 0.5, 0)
 	popup.AnchorPoint = Vector2.new(0, 0)
 	popup.BackgroundTransparency = 1
 	popup.Font = Enum.Font.GothamBold
-	popup.TextSize = 20
-	popup.TextColor3 = Color3.fromRGB(255, 215, 0)
-	popup.TextStrokeTransparency = 0.4
+	popup.TextSize = 28
+	popup.TextColor3 = Color3.fromRGB(255, 215, 0) -- gold
+	popup.TextStrokeTransparency = 0.2
 	popup.TextStrokeColor3 = Color3.new(0, 0, 0)
 	popup.Text = "+" .. formatNumber(amount)
 	popup.Parent = gui
@@ -163,7 +163,7 @@ function CoinCounter.showPopup(amount)
 		popup,
 		TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
 		{
-			Position = UDim2.new(0.5, -60, 0.5, -50),
+			Position = UDim2.new(0.5, -75, 0.5, -50),
 			TextTransparency = 1,
 			TextStrokeTransparency = 1,
 		}
