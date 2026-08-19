@@ -7,14 +7,12 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local RollController = require(ReplicatedStorage.Client.Controllers.RollController)
-local GameHUD = require(ReplicatedStorage.UI.GameHUD)
+local RollController = require(script:WaitForChild("Controllers"):WaitForChild("RollController"))
+local GameHUD = require(ReplicatedStorage:WaitForChild("UI"):WaitForChild("GameHUD"))
 
--- Wait for player to load
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Create the HUD
-GameHUD.create(playerGui)
+GameHUD.create(playerGui, RollController)
 
 print("D20 Farm client initialized!")

@@ -9,6 +9,9 @@
       },
       "FX": {
         "$path": "src/FX"
+      },
+      "UI": {
+        "$path": "src/UI"
       }
     },
 
@@ -23,12 +26,6 @@
         "Client": {
           "$path": "src/client"
         }
-      }
-    },
-
-    "StarterGui": {
-      "UI": {
-        "$path": "src/UI"
       }
     },
 

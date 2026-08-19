@@ -23,13 +23,13 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Constants = require(ReplicatedStorage.Shared.Constants)
-local RollController = require(ReplicatedStorage.Client.Controllers.RollController)
 
 local DiceDisplay = require(ReplicatedStorage.UI.DiceDisplay)
 local CoinCounter = require(ReplicatedStorage.UI.CoinCounter)
 local ShopOverlay = require(ReplicatedStorage.UI.ShopOverlay)
 
 local GameHUD = {}
+local rollController = nil
 
 -- ── Layout tokens ──────────────────────────────────────────────
 -- Centered on screen. DiceDisplay occupies roughly a 300×300 box;
@@ -99,58 +99,56 @@ shopCorner.Parent = shopBtn
 --- Creates sub-components (DiceDisplay, CoinCounter, ShopOverlay) and
 --- wires button callbacks to the RollController.
 --- @param parent Instance  The ScreenGui's parent (PlayerGui).
+--- @param controller table The RollController module to use.
 --- @return ScreenGui       The master GameHUD ScreenGui.
-function GameHUD.create(parent)
-	-- Instantiate sub-components inside the master GUI.
+function GameHUD.create(parent, controller)
+	rollController = controller
 	DiceDisplay.create(gui)
 	CoinCounter.create(gui)
 	ShopOverlay.create(gui)
 
-	-- ── Roll button callback ─────────────────────────────────
 	rollBtn.MouseButton1Click:Connect(function()
 		if isOnCooldown then
 			return
 		end
-		RollController.requestRoll()
+		if rollController then
+			rollController.requestRoll()
+		end
 	end)
 
-	-- ── Shop button callback ─────────────────────────────────
 	shopBtn.MouseButton1Click:Connect(function()
 		if ShopOverlay.isOpen() then
 			ShopOverlay.close()
 		else
-			local state = RollController.getGameState()
-			ShopOverlay.open(state.coins, {})
+			if rollController then
+				local state = rollController.getGameState()
+				ShopOverlay.open(state.coins, {})
+			end
 		end
 	end)
 
-	-- ── Roll result handler ──────────────────────────────────
-	RollController.onRollResult(function(result)
-		-- Trigger dice animation (critical glow if applicable).
-		if result.isCritical then
-			DiceDisplay.playCriticalGlow()
-		end
-		DiceDisplay.playRollAnimation()
+	if rollController then
+		rollController.onRollResult(function(result)
+			if result.isCritical then
+				DiceDisplay.playCriticalGlow()
+			end
+			DiceDisplay.playRollAnimation()
+			CoinCounter.showPopup(result.coinsEarned)
 
-		-- Show coin earned popup.
-		CoinCounter.showPopup(result.coinsEarned)
+			isOnCooldown = true
+			rollBtn.BackgroundColor3 = COLOR_ROLL_COOLDOWN
+			rollBtn.Text = "COOLDOWN"
+			rollBtn.AutoButtonColor = false
 
-		-- Enter cooldown state — disable button visually.
-		isOnCooldown = true
-		rollBtn.BackgroundColor3 = COLOR_ROLL_COOLDOWN
-		rollBtn.Text = "COOLDOWN"
-		rollBtn.AutoButtonColor = false
-
-		-- Exit cooldown after the configured duration.
-		task.delay(Constants.GAME_CONFIG.rollCooldown, function()
-			isOnCooldown = false
-			rollBtn.BackgroundColor3 = COLOR_ROLL_IDLE
-			rollBtn.Text = "ROLL"
-			rollBtn.AutoButtonColor = true
+			task.delay(Constants.GAME_CONFIG.rollCooldown, function()
+				isOnCooldown = false
+				rollBtn.BackgroundColor3 = COLOR_ROLL_IDLE
+				rollBtn.Text = "ROLL"
+				rollBtn.AutoButtonColor = true
+			end)
 		end)
-	end)
+	end
 
-	-- Parent the master GUI into the player's PlayerGui.
 	gui.Parent = parent
 	return gui
 end

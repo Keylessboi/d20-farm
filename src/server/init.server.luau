@@ -7,8 +7,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Remotes = require(ReplicatedStorage.Shared.Remotes)
-local DiceService = require(script.Parent.Services.DiceService)
-local CoinService = require(script.Parent.Services.CoinService)
+local DiceService = require(script.Services.DiceService)
+local CoinService = require(script.Services.CoinService)
 
 -- Handle roll requests from clients
 Remotes.RollDice.OnServerInvoke = function(player)
