@@ -23,7 +23,7 @@ local SCALE_STEP = 0.067 -- per additional die beyond the first
 -- Dice sprite asset ID (replace with uploaded asset ID in production)
 -- The D20.hex sprite is uploaded as an Image asset in Roblox Studio.
 -- For now we use a placeholder decal ID that will be swapped after upload.
-local DICE_SPRITE_ID = "rbxassetid://0" -- placeholder — set after asset upload
+local DICE_SPRITE_ID = "rbxassetid://112604819604412"
 
 local DiceDisplay = {}
 
@@ -81,6 +81,10 @@ function DiceDisplay.create(parent: Instance): ScreenGui
 	displayFrame.Parent = gui
 
 	gui.Parent = parent
+
+	-- Show default single D20 on creation
+	DiceDisplay.updateDice({{ color = Color3.fromRGB(139, 90, 43) }}, false)
+
 	return gui
 end
 

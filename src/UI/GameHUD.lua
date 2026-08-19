@@ -133,6 +133,9 @@ function GameHUD.create(parent, controller)
 				DiceDisplay.playCriticalGlow()
 			end
 			DiceDisplay.playRollAnimation()
+			local rollValue = result.total or 1
+			local diceList = {{ color = Color3.fromRGB(139, 90, 43) }}
+			DiceDisplay.updateDice(diceList, result.isCritical)
 			CoinCounter.showPopup(result.coinsEarned)
 
 			isOnCooldown = true

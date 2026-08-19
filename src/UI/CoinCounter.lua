@@ -48,7 +48,7 @@ coinIcon.Position = UDim2.new(0, 0, 0.5, -20)
 coinIcon.BackgroundTransparency = 1
 coinIcon.ScaleType = Enum.ScaleType.Fit
 -- Coin.hex is an 8x8 pixel-art grid — placeholder until a Roblox decal is uploaded.
-coinIcon.Image = "rbxassetid://0"
+coinIcon.Image = "rbxassetid://111238667265164"
 coinIcon.Parent = container
 
 -- ── Coin count text ─────────────────────────────────────────────────────────

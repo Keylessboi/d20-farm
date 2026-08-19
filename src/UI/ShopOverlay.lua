@@ -313,146 +313,92 @@ function ShopOverlay.open(playerCoins, ownedDice)
 		end
 	end
 
-	-- Build list of purchasable tiers (unowned only, starting from the next available)
-	local purchasable = {}
-	for i, diceInfo in ipairs(Constants.DICE_TYPES) do
-		-- Tier 1 (Wooden, cost 0) is the starter — skip it in the shop
-		if diceInfo.cost <= 0 then
-			continue
-		end
-		if not ownedIndices[i] then
-			table.insert(purchasable, { index = i, info = diceInfo })
-		end
-	end
+	local tierColors = {
+		Color3.fromRGB(139, 90, 43),
+		Color3.fromRGB(180, 50, 50),
+		Color3.fromRGB(50, 180, 50),
+		Color3.fromRGB(50, 50, 180),
+		Color3.fromRGB(180, 180, 50),
+		Color3.fromRGB(180, 50, 180),
+		Color3.fromRGB(50, 180, 180),
+		Color3.fromRGB(200, 130, 60),
+	}
+	local randomColor = tierColors[math.random(#tierColors)]
 
-	-- All dice bought → "More coming soon!"
-	if #purchasable == 0 then
-		local msg = Instance.new("TextLabel")
-		msg.Name = "AllBoughtMsg"
-		msg.Size = UDim2.new(1, 0, 0, 50)
-		msg.Position = UDim2.new(0, 0, 0.3, 0)
-		msg.BackgroundTransparency = 1
-		msg.Font = Enum.Font.GothamBold
-		msg.TextSize = 22
-		msg.TextColor3 = Color3.fromRGB(255, 215, 0)
-		msg.Text = "More coming soon!"
-		msg.TextXAlignment = Enum.TextXAlignment.Center
-		msg.Parent = scroll
-		table.insert(shopItems, msg)
-		return
-	end
+	local itemFrame = Instance.new("Frame")
+	itemFrame.Name = "ShopItem_D20"
+	itemFrame.Size = UDim2.new(1, -20, 0, 80)
+	itemFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+	itemFrame.BorderSizePixel = 0
+	itemFrame.Parent = scroll
 
-	-- Populate grid with purchasable dice
-	for order, entry in ipairs(purchasable) do
-		local i = entry.index
-		local diceInfo = entry.info
-		local price = diceInfo.cost
-		local canAfford = playerCoins >= price
+	local itemCorner = Instance.new("UICorner")
+	itemCorner.CornerRadius = UDim.new(0, 8)
+	itemCorner.Parent = itemFrame
 
-		local itemFrame = Instance.new("Frame")
-		itemFrame.Name = "Item_" .. i
-		itemFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 42)
-		itemFrame.BorderSizePixel = 0
-		itemFrame.LayoutOrder = order
-		itemFrame.Parent = scroll
+	local diceIcon = Instance.new("ImageLabel")
+	diceIcon.Name = "DiceIcon"
+	diceIcon.Size = UDim2.new(0, 56, 0, 56)
+	diceIcon.Position = UDim.new(0, 12, 0.5, -28)
+	diceIcon.BackgroundTransparency = 1
+	diceIcon.Image = "rbxassetid://132103141158761"
+	diceIcon.ImageColor3 = randomColor
+	diceIcon.ScaleType = Enum.ScaleType.Fit
+	diceIcon.Parent = itemFrame
 
-		local itemCorner = Instance.new("UICorner")
-		itemCorner.CornerRadius = UDim.new(0, 8)
-		itemCorner.Parent = itemFrame
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.Name = "Name"
+	nameLabel.Size = UDim2.new(1, -180, 0, 24)
+	nameLabel.Position = UDim.new(0, 80, 0, 10)
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.Text = "D20"
+	nameLabel.TextColor3 = Color3.new(1, 1, 1)
+	nameLabel.Font = Enum.Font.GothamBold
+	nameLabel.TextSize = 18
+	nameLabel.TextXAlignment = Enum.TextXAlignment.Left
+	nameLabel.Parent = itemFrame
 
-		local itemStroke = Instance.new("UIStroke")
-		itemStroke.Color = canAfford and Color3.fromRGB(80, 80, 90) or Color3.fromRGB(50, 50, 55)
-		itemStroke.Thickness = 1
-		itemStroke.Parent = itemFrame
+	local descLabel = Instance.new("TextLabel")
+	descLabel.Name = "Desc"
+	descLabel.Size = UDim2.new(1, -180, 0, 20)
+	descLabel.Position = UDim.new(0, 80, 0, 36)
+	descLabel.BackgroundTransparency = 1
+	descLabel.Text = "Standard twenty-sided die"
+	descLabel.TextColor3 = Color3.fromRGB(160, 160, 160)
+	descLabel.Font = Enum.Font.Gotham
+	descLabel.TextSize = 14
+	descLabel.TextXAlignment = Enum.TextXAlignment.Left
+	descLabel.Parent = itemFrame
 
-		-- Dice icon (colored circle to represent the die)
-		local icon = Instance.new("Frame")
-		icon.Name = "Icon"
-		icon.Size = UDim2.new(0, 52, 0, 52)
-		icon.Position = UDim2.new(0, 12, 0.5, -26)
-		icon.BackgroundColor3 = diceInfo.color
-		icon.BorderSizePixel = 0
-		icon.Parent = itemFrame
+	local priceLabel = Instance.new("TextLabel")
+	priceLabel.Name = "Price"
+	priceLabel.Size = UDim2.new(0, 100, 0, 20)
+	priceLabel.Position = UDim2.new(0, 80, 0, 56)
+	priceLabel.BackgroundTransparency = 1
+	priceLabel.Text = "FREE (starter)"
+	priceLabel.TextColor3 = Color3.fromRGB(100, 200, 100)
+	priceLabel.Font = Enum.Font.GothamBold
+	priceLabel.TextSize = 14
+	priceLabel.TextXAlignment = Enum.TextXAlignment.Left
+	priceLabel.Parent = itemFrame
 
-		local iconCorner = Instance.new("UICorner")
-		iconCorner.CornerRadius = UDim.new(1, 0)
-		iconCorner.Parent = icon
+	local statusBtn = Instance.new("TextButton")
+	statusBtn.Name = "Status"
+	statusBtn.Size = UDim2.new(0, 90, 0, 32)
+	statusBtn.Position = UDim2.new(1, -102, 0.5, -16)
+	statusBtn.BackgroundColor3 = Color3.fromRGB(60, 120, 60)
+	statusBtn.Text = "OWNED"
+	statusBtn.TextColor3 = Color3.new(1, 1, 1)
+	statusBtn.Font = Enum.Font.GothamBold
+	statusBtn.TextSize = 14
+	statusBtn.AutoButtonColor = false
+	statusBtn.Parent = itemFrame
 
-		-- "D20" label inside icon
-		local iconLabel = Instance.new("TextLabel")
-		iconLabel.Size = UDim2.new(1, 0, 1, 0)
-		iconLabel.BackgroundTransparency = 1
-		iconLabel.Font = Enum.Font.GothamBold
-		iconLabel.TextSize = 16
-		iconLabel.TextColor3 = Color3.new(0, 0, 0)
-		iconLabel.Text = "D20"
-		iconLabel.Parent = icon
+	local statusCorner = Instance.new("UICorner")
+	statusCorner.CornerRadius = UDim.new(0, 6)
+	statusCorner.Parent = statusBtn
 
-		-- Dice name
-		local nameLabel = Instance.new("TextLabel")
-		nameLabel.Name = "Name"
-		nameLabel.Size = UDim2.new(1, -180, 0, 24)
-		nameLabel.Position = UDim2.new(0, 76, 0, 12)
-		nameLabel.BackgroundTransparency = 1
-		nameLabel.Font = Enum.Font.GothamBold
-		nameLabel.TextSize = 16
-		nameLabel.TextColor3 = diceInfo.color
-		nameLabel.Text = diceInfo.name
-		nameLabel.TextXAlignment = Enum.TextXAlignment.Left
-		nameLabel.Parent = itemFrame
-
-		-- Multiplier info
-		local multLabel = Instance.new("TextLabel")
-		multLabel.Name = "Multiplier"
-		multLabel.Size = UDim2.new(1, -180, 0, 20)
-		multLabel.Position = UDim2.new(0, 76, 0, 38)
-		multLabel.BackgroundTransparency = 1
-		multLabel.Font = Enum.Font.Gotham
-		multLabel.TextSize = 13
-		multLabel.TextColor3 = Color3.fromRGB(140, 140, 150)
-		multLabel.Text = "x" .. tostring(diceInfo.multiplier) .. " coin multiplier"
-		multLabel.TextXAlignment = Enum.TextXAlignment.Left
-		multLabel.Parent = itemFrame
-
-		-- Price label
-		local priceLabel = Instance.new("TextLabel")
-		priceLabel.Name = "Price"
-		priceLabel.Size = UDim2.new(0, 80, 0, 20)
-		priceLabel.Position = UDim2.new(0, 76, 1, -32)
-		priceLabel.BackgroundTransparency = 1
-		priceLabel.Font = Enum.Font.Gotham
-		priceLabel.TextSize = 14
-		priceLabel.TextColor3 = canAfford and Color3.fromRGB(255, 215, 0) or Color3.fromRGB(150, 60, 60)
-		priceLabel.Text = tostring(price) .. " coins"
-		priceLabel.TextXAlignment = Enum.TextXAlignment.Left
-		priceLabel.Parent = itemFrame
-
-		-- Buy button
-		local buyBtn = Instance.new("TextButton")
-		buyBtn.Name = "BuyBtn"
-		buyBtn.Size = UDim2.new(0, 100, 0, 38)
-		buyBtn.Position = UDim2.new(1, -116, 0.5, -19)
-		buyBtn.BackgroundColor3 = canAfford and Color3.fromRGB(45, 140, 55) or Color3.fromRGB(55, 55, 60)
-		buyBtn.Text = canAfford and "BUY" or "LOCKED"
-		buyBtn.TextColor3 = canAfford and Color3.new(1, 1, 1) or Color3.fromRGB(100, 100, 105)
-		buyBtn.Font = Enum.Font.GothamBold
-		buyBtn.TextSize = 15
-		buyBtn.AutoButtonColor = canAfford
-		buyBtn.Parent = itemFrame
-
-		local buyCorner = Instance.new("UICorner")
-		buyCorner.CornerRadius = UDim.new(0, 8)
-		buyCorner.Parent = buyBtn
-
-		-- Wire buy action → confirmation prompt
-		if canAfford then
-			buyBtn.MouseButton1Click:Connect(function()
-				showConfirm(i, diceInfo, price, canAfford)
-			end)
-		end
-
-		table.insert(shopItems, itemFrame)
-	end
+	table.insert(shopItems, itemFrame)
 end
 
 function ShopOverlay.close()
