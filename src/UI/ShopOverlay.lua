@@ -341,8 +341,9 @@ function ShopOverlay.open(playerCoins, ownedDice)
 	diceIcon.Size = UDim2.new(0, 56, 0, 56)
 	diceIcon.Position = UDim.new(0, 12, 0.5, -28)
 	diceIcon.BackgroundTransparency = 1
-	diceIcon.Image = "rbxassetid://132103141158761"
-	diceIcon.ImageColor3 = randomColor
+diceIcon.Image = "rbxassetid://REPLACE_WITH_CUTEDICE_FRAME1_ID"
+diceIcon.ImageRectSize = Vector2.new(224, 224)
+diceIcon.ImageRectOffset = Vector2.new(0, 0)
 	diceIcon.ScaleType = Enum.ScaleType.Fit
 	diceIcon.Parent = itemFrame
 
